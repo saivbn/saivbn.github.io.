@@ -1,0 +1,73 @@
+name: Deploy Portfolio to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set up Node.js (for HTML linting and potential JS dependencies)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      # Install dependencies (for HTML linting)
+      - name: Install dependencies
+        run: npm install -g htmlhint
+
+      # Lint HTML files
+      - name: Lint HTML
+        run: htmlhint index.html
+        continue-on-error: true
+
+      # Validate CSS
+      - name: Validate CSS
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install CSS lint
+        run: pip install csslint
+      - name: Run CSS lint
+        run: csslint index.html
+        continue-on-error: true
+
+      # Create build directory and copy files
+      - name: Prepare build
+        run: |
+          mkdir -p build
+          cp -r *.html img build/
+          # Copy any additional assets if present
+          [ -d "css" ] && cp -r css build/ || true
+          [ -d "js" ] && cp -r js build/ || true
+
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          publish_branch: gh-pages
+          force_orphan: true
+
+      # Notify on successful deployment
+      - name: Notify deployment
+        if: success()
+        run: echo "Successfully deployed to GitHub Pages"
+
+      # Handle deployment failure
+      - name: Notify failure
+        if: failure()
+        run: echo "Deployment failed"

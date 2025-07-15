@@ -104,6 +104,60 @@
             display: flex;
             align-items: center;
         }
+        
+                .resume {
+            background: var(--card);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid var(--border);
+            box-shadow: 0 5px 15px var(--shadow);
+            max-width: 800px;
+            margin: 0 auto 100px;
+        }
+
+        .resume-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+        }
+
+        .project-link {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background: var(--card);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            text-decoration: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px var(--shadow);
+            border: 1px solid var(--border);
+            z-index: 2;
+        }
+
+        .project-card:hover .project-link {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .project-link:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Add this to ensure project cards are positioned relatively */
+        .project-card {
+            position: relative;
+        }
 
         .logo span {
             color: var(--primary);
@@ -910,11 +964,12 @@
         <div class="container">
             <nav>
                 <a href="#" class="logo"><i class="fas fa-robot"></i>Sai<span>Kumar</span></a>
-                <ul class="nav-links">
+               <ul class="nav-links">
                     <li><a href="#about">About</a></li>
                     <li><a href="#skills">Skills</a></li>
                     <li><a href="#projects">Projects</a></li>
                     <li><a href="#education">Education</a></li>
+                    <li><a href="#resume">Resume</a></li> <!-- Add this line -->
                     <li><a href="#contact">Contact</a></li>
                 </ul>
                 <button class="theme-toggle" id="themeToggle">
@@ -1087,6 +1142,9 @@
             <div class="projects-grid">
                 <!-- Sign Language Prediction Project -->
                 <div class="project-card">
+                    <a href="https://github.com/saivbn/sign-language-recognition" class="project-link" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
                     <div class="project-image">
                         <i class="fas fa-hands"></i>
                     </div>
@@ -1112,6 +1170,9 @@
                 
                 <!-- Snake Game with Hand Gestures -->
                 <div class="project-card">
+                     <a href="https://github.com/saivbn/snake-game-hand-gesture" class="project-link" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
                     <div class="project-image">
                         <i class="fas fa-gamepad"></i>
                     </div>
@@ -1137,6 +1198,9 @@
                 
                 <!-- Existing Projects -->
                 <div class="project-card">
+                    <a href="https://github.com/saivbn/water-chlorine-detection" class="project-link" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
                     <div class="project-image">
                         <i class="fas fa-water"></i>
                     </div>
@@ -1181,6 +1245,9 @@
                 </div>
                 
                 <div class="project-card">
+                    <a href="https://github.com/saivbn/autonomous-path-planning" class="project-link" target="_blank">
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
                     <div class="project-image">
                         <i class="fas fa-project-diagram"></i>
                     </div>
@@ -1251,6 +1318,26 @@
                         <span class="date">2021</span>
                         <p>Schooling (10th Grade)</p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--Resume section-->
+    
+    <section id="resume" class="resume-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>My Resume</h2>
+            </div>
+            <div class="resume">
+                <p>Download my full resume to learn more about my qualifications, experience, and skills.</p>
+                <a href="resume/Sai resume.pdf (1).pdf" class="btn btn-primary resume-btn" download>
+                    <i class="fas fa-download"></i> Download Resume
+                </a>
+                <div class="resume-preview">
+                    <!-- Optional: Add iframe for PDF preview if hosted online -->
+                    <!-- <iframe src="https://drive.google.com/file/d/YOUR_FILE_ID/preview" width="100%" height="500px" style="border:none; margin-top:30px;"></iframe> -->
                 </div>
             </div>
         </div>
@@ -1435,7 +1522,7 @@
         });
         
         // Smooth scrolling for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        document.querySelectorAll('a[href^="resume"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 
@@ -1482,6 +1569,39 @@
         
         window.addEventListener('scroll', animateSkillBars);
         animateSkillBars(); // Initialize on page load
+        
+        // Active navigation link highlighting
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        function highlightNavLink() {
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').substring(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', highlightNavLink);
+        highlightNavLink(); // Initialize on page load
+        
+        // Initialize animations on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Trigger animations for elements already in view
+            setTimeout(animateSkillBars, 300);
+            setTimeout(highlightNavLink, 300);
+        });
     </script>
 </body>
 </html>
